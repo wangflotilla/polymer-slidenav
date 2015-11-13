@@ -1,21 +1,22 @@
-<!-- Import Polymer -->
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html">
 
-<!-- Define your custom element -->
-<polymer-element name="slidenav-toggler" on-tap="{{tapped}}">
-  <template>
-    <div id="toggle-button">
-      <content></content>
-    </div>
-  </template>
-  <script>
-  Polymer('slidenav-toggler', {
-    ready: function(){
-      this.fire('toggler-ready', { toggler : this });
-    },
-    tapped: function(){
-      this.fire('togglerClicked');
-    }
-  });
-  </script>
-</polymer-element>
+<!-- Slidenav Toggler Element, opens and closes Slidenav Drawer Element when clicked -->
+<dom-module id="slidenav-toggler">
+	<template>
+		<div id="toggle-button" layout="row">
+			<content></content>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'slidenav-toggler',
+			ready: function () {
+				this.fire('toggler-ready', { toggler: this });
+			},
+			tapped: function () {
+				this.fire('togglerClicked');
+			},
+			listeners: { tap: 'tapped' }
+		});
+	</script>
+</dom-module>

@@ -1,106 +1,116 @@
 <!--
-Polymer slidenav element
+Polymer 1.0 Slidenav
 
 @element polymer-slidenav
 @demo http://nobitagit.github.io/polymer-slidenav/demos/demo-drawer.html
 -->
-
-<!-- Import Polymer -->
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="slidenav-toggler.html">
-<link rel="import" href="slidenav-menu.html">
+<link rel="import" href="slidenav-drawer.html">
 
 <!-- Define your custom element -->
-<polymer-element name="polymer-slidenav" attributes="speed">
+<dom-module id="polymer-slidenav">
+  <style>
+  [unresolved] {
+	opacity: 0;
+  }
+  :host {
+	display: block;
+  }
+  </style>
   <template>
-    <style>
-       [unresolved] {
-        opacity: 0;
-      }
-      :host {
-        display: block;
-      }
-    </style>
-    <content></content>
-  </template>
+        <content></content>
+    </template>
   <script>
-    Polymer('polymer-slidenav', {
-      speed : '0.4s',
-      prop : 'height',
-
+    Polymer({
+      is: 'polymer-slidenav',
+      properties: {
+        prop: {
+          type: String,
+          value: 'height'
+        },
+        speed: {
+          type: String,
+          value: '0.4s',
+          notify: true
+        },
+		startOpen: {
+		  type: Boolean,
+		  value: false,
+		  notify: true
+		}
+      },
       // Fires when the "<polymer-element>" has been fully prepared
-      ready: function(){
+      ready: function () {
         this.toggler = this.getElementsByTagName('slidenav-toggler')[0];
-        this.menu = this.getElementsByTagName('slidenav-menu')[0];
-
+        this.drawer = this.getElementsByTagName('slidenav-drawer')[0];
         this.closedH = 0;
         this.initSetup();
         this.addList();
-
         this.addEventListener('togglerClicked', this.toggle);
       },
       // runs only once at load time
-      initSetup: function(){
+      initSetup: function () {
         this.storeValues();
-        this.collapse();
-        this.async(function(){
-            this.tran();
+		if(this.startOpen == false) {
+			this.collapse();
+		}
+        this.async(function () {
+          this.tran();
         }, null, 1);
         this.initialized = true;
-
         this.fire('slidenav/is-ready');
       },
-      storeValues: function(){
-        this.openH = this.menu.getBoundingClientRect()[this.prop];
+      storeValues: function () {
+        this.openH = this.drawer.getBoundingClientRect()[this.prop];
         this.setVal(this.openH);
       },
-      getSize: function(el, prop){
-        return parseInt( getComputedStyle(el).getPropertyValue(prop) );
+      getSize: function (el, prop) {
+        return parseInt(getComputedStyle(el).getPropertyValue(prop));
       },
-      hide: function(){
+      hide: function () {
         this.fire('slidenav/hide');
         // get height every time but the first one
         this.storeValues();
         this.tran();
         // see: http://www.polymer-project.org/docs/polymer/polymer.html#asyncmethod
-        this.async(function(){
+        this.async(function () {
           this.collapse();
         }, null, 1);
       },
-      show: function(){
+      show: function () {
         this.fire('slidenav/show');
-        this.setVal( this.openH );
+        this.setVal(this.openH);
         this.state = 'open';
       },
-      collapse: function(){
-        this.menu.style.height = 0;
-        this.menu.style.overflow = 'hidden';
+      collapse: function () {
+        this.set('drawer.style.height', 0);
+        this.set('drawer.style.overflow', 'hidden');
         this.state = 'closed';
       },
-      setVal: function(val){
-        this.menu.style.height = val + 'px';
+      setVal: function (val) {
+        this.set('drawer.style.height', val + 'px');
       },
-      toggle: function(e){
-        (this.state === 'closed') ? this.show() : this.hide();
-        //this.fire('valueChanged', this.value)
+      toggle: function (e) {
+        this.state === 'closed' ? this.show() : this.hide();
       },
-      addList: function(){
-        this.menu.addEventListener('webkitTransitionEnd', this.removeStyle.bind(this) );
-        this.menu.addEventListener('transitionEnd', this.removeStyle.bind(this) );
+      //this.fire('valueChanged', this.value)
+      addList: function () {
+        this.drawer.addEventListener('webkitTransitionEnd', this.removeStyle.bind(this));
+        this.drawer.addEventListener('transitionEnd', this.removeStyle.bind(this));
       },
-      removeStyle: function(){
+      removeStyle: function () {
         // remove style only if open
-        if( this.state === 'open' ){
-          this.menu.style.height = 'auto';
+        if (this.state === 'open') {
+          this.set('drawer.style.height', 'auto');
         }
         // fire event along with the open or close state
-        this.fire('slidenav/is-'+ this.state );
+        this.fire('slidenav/is-' + this.state);
       },
-      // set the transition on the element
-      tran: function(){
-        this.menu.style.webkitTransition = this.prop + ' ' + this.speed;
-        this.menu.style.transition = this.prop + ' ' + this.speed;
+      tran: function () {
+        this.set('drawer.style.webkitTransition', this.prop + ' ' + this.speed);
+        this.set('drawer.style.transition', this.prop + ' ' + this.speed);
       }
     });
   </script>
-</polymer-element>
+</dom-module>

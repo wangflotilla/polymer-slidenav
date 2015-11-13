@@ -1,0 +1,21 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!-- Slidenav Drawer Element, opens and closes when Slidenav Toggler Element is clicked -->
+<dom-module id="slidenav-drawer">
+	<style>
+		:host {
+			display: block;
+		}
+		#slidenav-drawer-content{
+			height: auto;
+		}
+	</style>
+	<template>
+		<div id="slidenav-drawer-content">
+			<content></content>
+		</div>
+	</template>
+	<script>
+		Polymer({ is: 'slidenav-drawer' });
+	</script>
+</dom-module>
